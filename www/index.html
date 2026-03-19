@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse Exhaustive du Thème Overworld de Super Mario Bros. 2</title>
+    
+    <!-- Tailwind CSS & Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Lora', 'serif'],
+                        display: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        paper: '#f9f8f6',
+                        ink: '#1a1a1a',
+                        darkpaper: '#121212',
+                        darkink: '#e5e5e5',
+                        primary: '#b34747',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Lora', serif;
+            text-align: justify;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            -ms-hyphens: auto;
+        }
+        
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Playfair Display', serif;
+            text-align: left;
+        }
+
+        .drop-cap::first-letter {
+            float: left;
+            font-size: 4.5rem;
+            line-height: 0.8;
+            padding-right: 0.5rem;
+            padding-top: 0.2rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #b34747;
+        }
+
+        .dark .drop-cap::first-letter {
+            color: #d97777;
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: #b34747;
+            width: 0%;
+            z-index: 50;
+            transition: width 0.1s ease-out;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+        th {
+            background-color: rgba(179, 71, 71, 0.1);
+            color: #b34747;
+            padding: 1rem;
+            border-bottom: 2px solid #b34747;
+        }
+        .dark th {
+            background-color: rgba(217, 119, 119, 0.1);
+            color: #d97777;
+            border-bottom: 2px solid #d97777;
+        }
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .dark td {
+            border-bottom: 1px solid #374151;
+        }
+        tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+        .dark tr:hover {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        .toc-link.active {
+            color: #b34747;
+            font-weight: 600;
+            border-left: 2px solid #b34747;
+            padding-left: 0.5rem;
+        }
+        .dark .toc-link.active {
+            color: #d97777;
+            border-left: 2px solid #d97777;
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .content-body p, .content-body h2, .content-body h3 {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        .content-body p::before, .content-body h2::before, .content-body h3::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: #b34747;
+            opacity: 0;
+            transform: scaleY(0);
+            transform-origin: center;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+        .dark .content-body p::before, .dark .content-body h2::before, .dark .content-body h3::before {
+            background-color: #d97777;
+        }
+        .content-body p:hover, .content-body h2:hover, .content-body h3:hover {
+            transform: translateX(8px);
+        }
+        .content-body p:hover::before, .content-body h2:hover::before, .content-body h3:hover::before {
+            opacity: 1;
+            transform: scaleY(1);
+        }
+
+        table tbody tr {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        table tbody tr:hover {
+            transform: scale(1.02) translateX(10px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            position: relative;
+            z-index: 10;
+        }
+        .dark table tbody tr:hover {
+            background-color: #1e1e1e;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        body.zen-mode .hide-in-zen {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+            position: absolute;
+        }
+        body.zen-mode .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            transition: all 0.5s ease;
+        }
+
+        /* --- Nouveaux Styles pour l'Audio et l'Image Local --- */
+        .media-container {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .dark .media-container {
+            background-color: #1a1a1a;
+            border-color: #374151;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+        audio {
+            width: 100%;
+            height: 40px;
+            outline: none;
+        }
+        /* Masquer le fond par défaut des lecteurs audio sur certains navigateurs */
+        audio::-webkit-media-controls-panel {
+            background-color: #f3f4f6;
+        }
+        .dark audio::-webkit-media-controls-panel {
+            background-color: #374151;
+        }
+
+        .partition-figure {
+            margin: 3rem 0;
+            text-align: center;
+        }
+        .partition-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.3s ease;
+        }
+        .dark .partition-image {
+            border-color: #374151;
+            opacity: 0.9; /* Évite un blanc trop éblouissant en mode sombre */
+        }
+        .partition-image:hover {
+            transform: scale(1.02);
+        }
+        .partition-caption {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        .dark .partition-caption {
+            color: #9ca3af;
+        }
+
+        /* Tooltips & Mots-clés */
+        .term-tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted #b34747;
+            color: #b34747;
+            font-weight: 500;
+        }
+        .dark .term-tooltip {
+            border-bottom-color: #d97777;
+            color: #d97777;
+        }
+        .term-tooltip .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            width: 250px;
+            background-color: #1a1a1a;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 50;
+            bottom: 135%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 0.85rem;
+            font-family: 'Lora', serif;
+            font-weight: normal;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            line-height: 1.4;
+        }
+        .dark .term-tooltip .tooltip-text {
+            background-color: #f9f8f6;
+            color: #121212;
+        }
+        .term-tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1a1a1a transparent transparent transparent;
+        }
+        .dark .term-tooltip .tooltip-text::after {
+            border-color: #f9f8f6 transparent transparent transparent;
+        }
+        .term-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .keyword-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: rgba(179, 71, 71, 0.08);
+            color: #b34747;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .keyword-pill:hover {
+            background-color: #b34747;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(179, 71, 71, 0.2);
+        }
+        .dark .keyword-pill {
+            background-color: rgba(217, 119, 119, 0.08);
+            color: #d97777;
+        }
+        .dark .keyword-pill:hover {
+            background-color: #d97777;
+            color: #121212;
+            box-shadow: 0 4px 6px -1px rgba(217, 119, 119, 0.2);
+        }
+
+        #back-to-top {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* --- Gemini Chat UI --- */
+        #ai-chat-btn {
+            transform: scale(1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #ai-chat-btn:hover {
+            transform: scale(1.1);
+        }
+        #ai-chat-panel {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.95);
+            transform-origin: bottom right;
+        }
+        #ai-chat-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .chat-message {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #b34747;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        #text-selection-popup {
+            position: absolute;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: translateY(10px);
+        }
+        #text-selection-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-paper text-ink transition-colors duration-300 dark:bg-darkpaper dark:text-darkink selection:bg-primary selection:text-white">
+
+    <div id="progress-bar"></div>
+
+    <header class="fixed top-0 w-full bg-paper/90 dark:bg-darkpaper/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-40 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="text-sm font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-400">
+                Revue de Ludomusicologie
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="reading-time" class="text-sm text-gray-500 dark:text-gray-400 hidden sm:block"></span>
+                <button id="zen-mode-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors" aria-label="Mode Zen" title="Activer/Désactiver le mode lecture focus">
+                    <i data-lucide="focus" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
+                </button>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors" aria-label="Basculer le thème">
+                    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-400"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="border-t border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-black/40 backdrop-blur-sm hide-in-zen overflow-x-auto scrollbar-hide">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center space-x-3 whitespace-nowrap">
+                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mr-2 flex items-center">
+                    <i data-lucide="hash" class="w-3.5 h-3.5 mr-1"></i> Accès direct
+                </span>
+                <a href="#evolution-nintendo" class="keyword-pill">Histoire Nintendo</a>
+                <a href="#ragtime" class="keyword-pill">Ragtime & Swing</a>
+                <a href="#defi-hardware" class="keyword-pill">Architecture 8-bit</a>
+                <a href="#esthetique-embodiment" class="keyword-pill">Embodiment Musical</a>
+                <a href="#decorticage-a" class="keyword-pill">Néo-Riemannianisme</a>
+                <a href="#impact-bigband" class="keyword-pill">Héritage Jazz</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 flex flex-col lg:flex-row gap-12 main-container transition-all duration-500">
+        
+        <aside class="hidden lg:block w-64 flex-shrink-0 hide-in-zen transition-opacity duration-300">
+            <div class="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pr-4 scrollbar-hide">
+                <h4 class="font-display font-bold text-lg mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">Sommaire</h4>
+                <nav id="toc-container" class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <!-- Généré dynamiquement en JS -->
+                </nav>
+            </div>
+        </aside>
+
+        <main class="flex-1 max-w-3xl">
+            <article class="prose prose-lg dark:prose-invert prose-headings:font-display prose-a:text-primary hover:prose-a:text-red-700 max-w-none">
+                
+                <header class="mb-12">
+                    <p class="text-primary font-semibold tracking-widest uppercase text-sm mb-2">Essai Analytique</p>
+                    <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-6">L'Analyse Exhaustive du Thème Overworld de Super Mario Bros. 2</h1>
+                    <h2 class="text-2xl font-normal italic text-gray-600 dark:text-gray-400 mt-0">Histoire, Philosophie Ludomusicale et Interprétation Pianistique</h2>
+                    <div class="mt-8 flex items-center space-x-4 border-y border-gray-200 dark:border-gray-800 py-4">
+                        <div>
+                            <p class="font-semibold text-sm m-0">Recherche Indépendante</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 m-0">Publié dans la section <i>Études Nintendo & Musique 8-bit</i></p>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="content-body">
+                    <p class="drop-cap">L'étude des musiques de jeux vidéo, formellement reconnue aujourd'hui sous l'appellation de ludomusicologie, a franchi au cours des dernières décennies le seuil de la simple nostalgie culturelle pour s'imposer comme un champ de recherche académique d'une grande rigueur. Au cœur de cette discipline naissante se trouve l'œuvre fondatrice de Koji Kondo, compositeur emblématique de la société Nintendo, dont les créations sonores ont redéfini de manière indélébile la relation intime entre l'environnement acoustique, l'interactivité motrice du joueur et l'identité visuelle d'une œuvre vidéoludique. Parmi son répertoire exceptionnellement vaste, le thème principal, communément désigné sous le terme d'Overworld, du jeu Super Mario Bros. 2 (sorti en 1988 sur le marché occidental) occupe une position paradigmatique et singulière.</p>
+                    
+                    <p>Cette pièce musicale ne se contente aucunement d'accompagner de manière passive une expérience de divertissement numérique ; elle se dresse comme le point de convergence de trajectoires historiques complexes. Ces trajectoires englobent les mutations corporatives et stratégiques de Nintendo, la genèse accidentelle et paradoxale du jeu lui-même, tout en fusionnant des héritages stylistiques d'une incroyable diversité tels que le ragtime, le jazz, le swing, la musique de vaudeville et les rythmes afro-caribéens. L'étude qui suit propose de déconstruire cette œuvre à travers un prisme analytique exhaustif, explorant en profondeur l'histoire croisée de sa création, la philosophie compositionnelle de Koji Kondo face aux limitations drastiques de l'architecture 8-bit, la structure musicologique et harmonique précise de la partition, son héritage florissant dans les orchestrations jazz modernes, et enfin, les défis biomécaniques et esthétiques inhérents à son interprétation pianistique la plus fidèle.</p>
+
+                    <h2 id="part-1">I. De la Carte Hanafuda à l'Écran : L'Histoire Croisée de Nintendo et du Processus Créatif</h2>
+                    <p>Pour saisir pleinement l'essence de la musique de Super Mario Bros. 2, il s'avère indispensable de la replacer dans la vaste fresque des bouleversements industriels et créatifs qui ont forgé l'identité de Nintendo. La chronologie de l'entreprise révèle une culture de l'adaptabilité et de l'expérimentation continue qui se reflète de manière intrinsèque dans sa production ludique et, par extension, musicale.</p>
+
+                    <h3 id="evolution-nintendo">L'Évolution de Nintendo : Du Jeu Traditionnel au Divertissement Électronique</h3>
+                    <p>L'histoire de Nintendo, institution basée à Kyoto, s'enracine profondément dans l'ère Meiji. En 1889, l'artisan Fusajiro Yamauchi fonde « Yamauchi Nintendo », une modeste entreprise dédiée à la fabrication de cartes à jouer traditionnelles japonaises appelées hanafuda. Ces cartes, délicatement illustrées de motifs floraux pour contourner les lois gouvernementales strictes interdisant les jeux de cartes numérotées associés aux jeux d'argent clandestins, ont rapidement dominé le marché nippon, trouvant même une clientèle assidue dans les casinos gérés par les yakuzas. Cette genèse est d'une importance capitale : dès ses origines les plus lointaines, Nintendo a lié le concept de divertissement à une esthétique visuelle prononcée et à une tactilité matérielle.</p>
+                    
+                    <p>Sous la direction visionnaire de Hiroshi Yamauchi, qui succède à Sekiryo Kaneda en 1949, l'entreprise amorce une phase de diversification radicale, s'essayant à divers marchés avant de trouver sa véritable vocation dans l'industrie du jouet ludique (avec des créations ingénieuses comme l'Ultra Hand en 1966) puis, inéluctablement, dans le divertissement électronique naissant des années 1970. Après le krach dévastateur du jeu vidéo nord-américain en 1983, Nintendo identifie une faille de marché béante et introduit avec audace sa console japonaise Famicom (lancée sur son sol natal en 1983) sur le marché américain en 1985 sous l'appellation de Nintendo Entertainment System (NES).</p>
+
+                    <div class="overflow-x-auto my-8">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="w-1/4">Période Historique</th>
+                                    <th>Événement Clé et Évolution Stratégique de Nintendo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">1889 – 1932</td>
+                                    <td>Fondation par Fusajiro Yamauchi. Production de cartes hanafuda sous l'ère Meiji, marquant l'origine de la société dans le divertissement visuel et tactile.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">1969 – 1978</td>
+                                    <td>Transition vers les jouets mécaniques (Ultra Hand) puis vers les premiers jeux vidéo d'arcade et la série de consoles dédiées Color TV-Game.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">1979 – 1987</td>
+                                    <td>Ère de l'innovation électronique portable avec les Game & Watch, succès mondial en arcade avec Donkey Kong (1981), et lancement triomphal de la Famicom/NES.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">1988 – 1994</td>
+                                    <td>Domination du marché avec le Game Boy, la Super Nintendo Entertainment System (SNES), et consolidation des franchises majeures.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>Ce lancement international est porté par un titre révolutionnaire conçu par le tandem créatif composé de Shigeru Miyamoto et Takashi Tezuka : Super Mario Bros.. Le succès phénoménal, critique et commercial de ce jeu, qui s'écoulera à des dizaines de millions d'exemplaires, crée instantanément le besoin impérieux d'une suite. Toutefois, l'histoire de ce second volet est marquée par une bifurcation inattendue, engendrant l'un des paradoxes de développement les plus étudiés du média.</p>
+
+                    <h3 id="paradoxe-doki">Le Paradoxe Doki Doki Panic et la Genèse de Super Mario Bros. 2</h3>
+                    <p>Le processus de création de Super Mario Bros. 2 illustre de manière éloquente la façon dont les contraintes géopolitiques commerciales et les sensibilités culturelles façonnent l'art vidéoludique. En 1986, Nintendo sort une suite directe au premier jeu, destinée exclusivement au marché japonais via le périphérique Famicom Disk System. Conçue principalement par Miyamoto et Tezuka avec le même moteur graphique et les mêmes assets que l'original, cette version est caractérisée par une difficulté d'une exigence extrême, parfois qualifiée de punitive et sadique, s'adressant explicitement aux « super joueurs » ayant maîtrisé le premier opus.</p>
+                    
+                    <p>Lorsque les exécutifs de Nintendo of America évaluent le titre pour une localisation, la branche américaine le juge beaucoup trop frustrant et structurellement trop similaire à son prédécesseur. La direction craint légitimement qu'un tel niveau de difficulté ne rebute le public occidental naissant et ne détruise la popularité de la franchise fraîchement établie sur le sol américain. Face à ce refus catégorique, Nintendo du Japon doit concevoir une alternative viable dans des délais extrêmement restreints. La solution se trouve dans un autre projet, initialement développé par Kensuke Tanabe sous la supervision de Shigeru Miyamoto : Yume Kōjō: Doki Doki Panic (traduisible par « Usine à Rêves : Panique Palpitante »).</p>
+                    
+                    <p>Ce jeu, sorti en juillet 1987 sur le Famicom Disk System, avait d'abord été conçu comme un prototype expérimental de jeu à défilement vertical centré sur l'action coopérative de soulever des blocs ou de se jeter mutuellement. L'aspect purement vertical s'avérant laborieux à transformer en un jeu complet, Miyamoto suggéra d'y intégrer des éléments de défilement horizontal traditionnels, le rapprochant inévitablement de la grammaire ludique de Mario. De manière surprenante, Doki Doki Panic était le fruit d'un partenariat commercial de licence avec Fuji Television pour promouvoir le grand festival technologique et médiatique « Yume Kōjō '87 ». Le jeu mettait en scène une famille de personnages d'inspiration arabe (Imajin, Mama, Lina, et Papa) qui servaient de mascottes officielles à l'événement.</p>
+                    
+                    <p>Pour créer le Super Mario Bros. 2 destiné au marché occidental (qui sortira triomphalement le 9 octobre 1988), Nintendo entreprend un méticuleux travail de re-skinning (modification esthétique) de Doki Doki Panic. La famille d'origine arabe est remplacée par les figures emblématiques de Mario, Luigi, la Princesse Peach et Toad, reprenant les attributs physiques (sauts flottants, puissance de levage) des personnages originaux. Certains éléments graphiques, les animations et, crucialement, une partie de la musique, sont altérés pour correspondre à l'univers du Royaume Champignon.</p>
+                    
+                    <p>Ce contexte de développement est fondamental pour l'analyse musicale et esthétique. L'ironie profonde de l'histoire du développement vidéo-ludique veut que les architectes historiques de Mario, à savoir Shigeru Miyamoto (producteur) et le compositeur Koji Kondo, aient été en réalité beaucoup plus intimement impliqués dans la conception originale de Doki Doki Panic que dans celle du Super Mario Bros. 2 japonais original (qui sera connu plus tard en Occident sous le nom de The Lost Levels). Ainsi, bien que née d'une licence télévisuelle externe, la partition musicale de ce jeu contenait déjà organiquement l'essence rythmique, la philosophie de conception et la « touche Mario », préparant le terrain fertile pour l'un des thèmes les plus emblématiques et mémorables de l'ère du 8-bit.</p>
+
+                    <h2 id="part-2">II. L'Évolution Stylistique et l'Émergence des Musiques Fondatrices au Piano</h2>
+                    <p>Afin d'appréhender la richesse harmonique et rythmique de la composition de Koji Kondo, il est impératif d'explorer les traditions musicales nord-américaines de la fin du XIXe et du début du XXe siècle. Le thème Overworld s'inscrit dans une lignée directe de styles pianistiques afro-américains, où le piano n'est pas simplement un instrument mélodique, mais un orchestre autonome et complet.</p>
+
+                    <h3 id="ragtime">Le Ragtime : La Genèse de la Syncope</h3>
+                    <p>Le ragtime, popularisé à l'aube du XXe siècle par des figures tutélaires telles que Scott Joplin (célèbre pour son Maple Leaf Rag publié en 1899), constitue la fondation rythmique indéniable de l'esthétique de Super Mario. Musicalement, le ragtime se caractérise par une tension inhérente entre une main gauche rigoureusement ancrée sur les temps forts (jouant des basses fondamentales ou des octaves sur les premier et troisième temps, et des accords sur les deuxième et quatrième temps) et une main droite déchaînant une mélodie hautement syncopée, c'est-à-dire qui accentue les temps faibles ou les contre-temps.</p>
+                    
+                    <p>Cette syncope, qui donne au style son nom (le temps « déchiqueté » ou ragged time), instaure un balancement propulsif qui invite irrépressiblement au mouvement physique. La recherche en ludomusicologie souligne que le ragtime, par son essence même, est une musique conçue pour la danse et l'animation kinesthésique, ce qui en fait un candidat idéal pour accompagner un avatar numérique dont l'interaction principale est le saut. Bien que les compositeurs ultérieurs aient adapté le ragtime pour des ensembles, ses pionniers (Joplin, Thomas Turpin, Eubie Blake, James Scott) étaient tous des pianistes virtuoses, consolidant l'idée que cette musique trouve sa réalisation la plus pure et la plus complète sur le clavier soliste.</p>
+
+                    <h3 id="piano-stride">Le Piano Stride et le Boogie-Woogie : L'Émancipation de la Main Gauche</h3>
+                    <p>Du ragtime a émergé, dans les années 1920 à Harlem, le piano stride (ou Harlem stride). Des innovateurs comme James P. Johnson, Thomas « Fats » Waller et Willie « The Lion » Smith ont étendu les concepts du ragtime en augmentant le tempo, en élargissant les intervalles à la main gauche (d'où le terme stride, signifiant enjamber) et en introduisant des éléments précoces d'improvisation jazzistique. Le stride exige une technique pianistique d'une difficulté redoutable, la main gauche devant accomplir des bonds rapides et précis sur plus d'un octave de distance à des tempos effrénés, tandis que la main droite exécute des arpèges complexes, des tierces parallèles et des voicings denses.</p>
+                    
+                    <p>Parallèlement, le boogie-woogie s'est développé comme un style centré sur le blues, caractérisé par des figures de basse obstinées (ostinato) à la main gauche, souvent construites sur des motifs de croches en cascade ou d'octaves brisées. Cette sensation de mouvement continu (momentum) inhérente au boogie-woogie et au stride a profondément influencé l'approche des concepteurs sonores de l'ère 8-bit, qui cherchaient à maintenir l'énergie du joueur sans interruption. L'Overworld de Super Mario Bros. 2 puise abondamment dans cette énergie, utilisant le canal de basse pour émuler une « walking bass » inébranlable qui rappelle le balancement inexorable des pianistes de Harlem.</p>
+
+                    <h3 id="swing">Le Swing et la Transition vers les Petits Ensembles</h3>
+                    <p>Le swing, qui a dominé l'ère des big bands des années 1930 et 1940, a institutionnalisé l'usage des accords de septième, des neuvièmes et d'une section rythmique dédiée (contrebasse, batterie, guitare, piano) chargée de maintenir le groove. Bien que Kondo dispose de ressources sonores infiniment plus restreintes que Count Basie ou Duke Ellington, il compense ce manque matériel par une compréhension structurelle du swing. En étudiant l'architecture harmonique de ces musiques fondatrices, Kondo a pu extraire leur sève fonctionnelle : les accords de dominante secondaires, les résolutions par cycle des quintes et l'utilisation de notes de passage chromatiques pour adoucir les mouvements de basse. Ainsi, la richesse du piano stride et du swing se retrouve distillée dans le microcosme de la puce sonore de la NES.</p>
+
+                    <h2 id="part-3">III. La Puce 2A03 et la Philosophie Ludomusicale de Koji Kondo</h2>
+                    <p>L'environnement technologique des années 1980 imposait des limites architecturales strictes qui ont forcé les compositeurs de musique de jeux vidéo à développer une ingéniosité hors pair. Koji Kondo, recruté par Nintendo en 1984 à la sortie de l'université, n'était pas seulement un compositeur, mais un véritable concepteur sonore. Sa formation initiale sur l'orgue électronique Yamaha Electone et son exploration précoce du synthétiseur analogique Yamaha CS-30 lui ont conféré une maîtrise exceptionnelle du séquençage et de la conception de timbres, compétences cruciales pour dompter le matériel de la Famicom.</p>
+
+                    <h3 id="defi-hardware">Le Défi Hardware : L'Architecture de la NES</h3>
+                    <p>La création musicale sur la Nintendo Entertainment System était irrémédiablement conditionnée par les capacités restreintes de la puce sonore Ricoh 2A03 (également connue sous le nom de Programmable Sound Generator). Le système ne disposait que de cinq canaux audio distincts, dont seulement trois étaient véritablement dédiés aux fréquences tonales.</p>
+
+                    <div class="overflow-x-auto my-8">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="w-1/3">Canal de la Puce 2A03</th>
+                                    <th>Caractéristiques Techniques et Utilisation Musicale Typique par Koji Kondo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Onde Carrée 1 (Pulse 1)</td>
+                                    <td>Canal mélodique principal. Possibilité de moduler la largeur d'impulsion pour changer le timbre (son nasillard type hautbois ou rond type clarinette). Contrôle du volume et de l'enveloppe.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Onde Carrée 2 (Pulse 2)</td>
+                                    <td>Canal harmonique secondaire. Souvent couplé au Pulse 1 pour créer des harmonies à deux voix, des effets de délai (écho), ou l'illusion d'accords complexes.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Onde Triangulaire (Triangle)</td>
+                                    <td>Utilisé presque exclusivement pour la basse. Ce canal possède un volume fixe, sans contrôle d'enveloppe direct, ce qui produit un son continu et profond, idéal pour les lignes de "walking bass" du jazz.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Bruit Blanc (Noise)</td>
+                                    <td>Générateur de nombres pseudo-aléatoires créant de la statique. Indispensable pour émuler les percussions (caisses claires, charlestons, cymbales) via la manipulation de l'enveloppe.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">DPCM (Delta Modulation)</td>
+                                    <td>Canal d'échantillonnage de très basse résolution. Utilisé sporadiquement pour de courts samples vocaux ou des percussions spécifiques (toms, timbales), mais très gourmand en mémoire cartouche.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>L'impossibilité physique de jouer plus de trois notes tonales simultanément obligeait les compositeurs à repenser totalement la densité de l'orchestration. Pour contourner cette limite drastique de polyphonie, Kondo utilisait des techniques d'écriture d'une sophistication redoutable. Il déployait des arpèges extrêmement rapides (arpeggio effect) où l'alternance fulgurante des notes trompe l'oreille humaine, créant l'illusion auditive d'un accord plein joué simultanément. De plus, Kondo maîtrisait l'art de la syncope non seulement rythmiquement, mais aussi techniquement : en décalant les notes sur des subdivisions infimes, il pouvait alterner rapidement les ondes entre les différents canaux, donnant l'illusion d'un ensemble beaucoup plus vaste qu'il ne l'était en réalité, créant un son distinctement « funky » et faussement dense.</p>
+                    
+                    <p>Cette contrainte technologique a mené à l'utilisation systématique des shell voicings (voicings en coquille). Empruntée aux grands maîtres du piano jazz comme Art Tatum et Bill Evans, cette technique consiste à omettre les notes redondantes d'un accord (généralement la quinte, et parfois la fondamentale si elle est assurée par la basse) pour ne conserver que les notes définissant sa couleur harmonique, à savoir la tierce et la septième. Dans l'Overworld de SMB2, Kondo emploie ces réductions harmoniques magistralement, impliquant des accords de neuvième ou des dominantes altérées avec seulement deux ondes carrées et une onde triangulaire.</p>
+
+                    <h3 id="esthetique-embodiment">L'Esthétique de l'Embodiment Musical et l'Identité du Gameplay</h3>
+                    <p>L'approche de Koji Kondo dépasse toutefois largement la simple prouesse technique de contournement matériel ; elle s'ancre dans une philosophie profonde et avant-gardiste de la relation entre l'avatar, l'espace virtuel et le joueur. Contrairement aux pratiques de la musique de film linéaire (où la musique dicte principalement une émotion psychologique telle que la peur, la tristesse ou l'héroïsme), Kondo a conçu la musique de la série Super Mario pour refléter viscéralement l'expérience physique, tactile et cinétique du gameplay. Suivant les directives philosophiques de Shigeru Miyamoto, qui exigeait un design audio synchronisé avec l'action et doté de « substance », Kondo a développé ce que la littérature académique nomme une esthétique de l'incarnation musicale (embodiment-of-music aesthetic).</p>
+                    
+                    <p>Dans cette vision ludomusicale révolutionnaire, le rythme et la mélodie n'accompagnent pas le mouvement de Mario, ils l'anticipent, l'imitent et le provoquent. Le thème Overworld de Super Mario Bros. 2 est méticuleusement conçu avec un balancement et une syncope qui induisent physiquement chez le joueur le désir de courir, de sauter et de se déplacer avec fluidité. Comme Kondo l'a lui-même précisé lors d'interviews, son rythme exerce une véritable « poussée » (push) motrice sur l'audience. L'identité de la musique n'est donc en aucun cas dissociable de l'interactivité ludique ; elle agit comme une interface invisible, un pont neurologique qui relie la motricité humaine à la physique numérique programmée dans le code du jeu. Cette synergie parfaite confère à la partition un caractère d'intemporalité absolue, car elle s'adresse directement au sens proprioceptif du rythme inhérent à la condition humaine.</p>
+
+                    <h2 id="part-4">IV. Influences Croisées : Calypso, Rythmes Latins et Vaudeville dans l'Univers de Subcon</h2>
+                    <p>Le génie singulier de Koji Kondo réside dans sa capacité alchimique à synthétiser des traditions musicales extrêmement disparates au sein du cadre contraint du 8-bit. L'analyse stylistique du thème Overworld de Super Mario Bros. 2 révèle un syncrétisme musical fascinant, puisant sans complexe dans le répertoire de la diaspora africaine, de la musique latine, et du théâtre de divertissement comique nord-américain. Ce mélange hétéroclite s'aligne parfaitement avec l'univers onirique et absurde du jeu.</p>
+
+                    <h3 id="afro-caribeen">Le Caractère Afro-Caribéen : Calypso et Latin Bounce</h3>
+                    <p>Kondo a publiquement déclaré son affection profonde pour la musique latine, le jazz de la côte ouest, et le travail de fusion instrumentale de musiciens japonais tels que le saxophoniste Sadao Watanabe et le groupe T-Square. L'Overworld de Super Mario Bros. 2 incorpore un fort sentiment caribéen et latino, souvent qualifié par les analystes de Calypso ou de Mambo.</p>
+                    
+                    <p>Ce caractère spécifique se manifeste non seulement par l'utilisation astucieuse du canal de bruit blanc pour simuler des percussions latines (shakers, congas, timbales virtuelles), mais aussi par l'adoption rythmique d'un « rebond latin » (Latin bounce). Contrairement au swing traditionnel des clubs de jazz, qui repose sur une division ternaire très relâchée du temps (le fameux chabada), le rebond latin de Kondo est structurellement plus direct, droit (straight eighths) et orienté vers une accroche pop immédiate. Les syncopes s'effectuent par l'anticipation vigoureuse des temps forts, permettant au joueur d'appréhender le rythme instantanément, un élément crucial pour la précision des sauts millimétrés requis par le level design.</p>
+
+                    <h3 id="vaudeville">L'Esthétique du Vaudeville et du Slapstick</h3>
+                    <p>Outre ses racines caribéennes et jazzistiques, la pièce comporte de multiples caractéristiques indéniablement propres au vaudeville, au music-hall et à l'esthétique du slapstick des dessins animés des années 1930. Le monde de Super Mario Bros. 2 se déroule dans le royaume de Subcon, un univers de rêve peuplé d'ennemis masqués (les Mask-Gates, Shy Guys) et de mécaniques de jeu burlesques, notamment l'action de déraciner des légumes géants pour les projeter sur les adversaires.</p>
+                    
+                    <p>L'humour musical de Kondo s'exprime ici à travers des sauts intervalliques abrupts, des arpèges espiègles, et une orchestration qui, selon certains ludomusicologues, évoque tour à tour un banjo roulant, une contrebasse comique et un piano de saloon désaccordé. Cette tonalité de dessin animé décalée, infusée d'influences bluegrass et de dixieland, confère au jeu une ambiance folâtrement théâtrale. Le choix de cette musique enjouée contraste radicalement avec l'approche parfois anxiogène des thèmes souterrains, démontrant la volonté de Kondo de cartographier musicalement les espaces virtuels.</p>
+
+                    <h2 id="part-5">V. Analyse Musicologique et Harmonique Exhaustive du Thème Overworld</h2>
+                    
+                    <!-- INSERTION AUDIO 1 : MUSIQUE ORIGINALE (.WAV) -->
+                    <div class="media-container reveal">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg text-indigo-600 dark:text-indigo-300">
+                                <i data-lucide="music" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-lg m-0">Thème Original (8-bit)</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 m-0">Composition de Koji Kondo (Famicom / NES)</p>
+                            </div>
+                        </div>
+                        <!-- Le fichier original.wav doit être dans le même dossier que ce fichier HTML -->
+                        <audio controls preload="metadata">
+                            <source src="original.wav" type="audio/wav">
+                            Votre navigateur ne supporte pas l'élément audio.
+                        </audio>
+                    </div>
+
+                    <p>Pour comprendre méticuleusement comment cette complexité stylistique et philosophique est articulée sur le plan strictement technique, une analyse harmonique rigoureuse de la partition est incontournable. L'architecture de la pièce démontre une sophistication intellectuelle bien supérieure à l'image réductrice d'une simple mélodie enfantine. Le thème est ancré dans la tonalité de Do majeur (C major), bien que cette structure tonale soit constamment défiée et enrichie d'emprunts modaux et de chromatismes audacieux.</p>
+
+                    <h3 id="structure-formelle">Structure Formelle de l'Œuvre</h3>
+                    <p>Le thème Overworld est un objet musical prolongé qui fonctionne selon le principe de la boucle infinie, structuré en quatre sections distinctes dont le déroulement maintient un intérêt cognitif constant pour le joueur.</p>
+
+                    <div class="overflow-x-auto my-8">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="w-1/4">Section de l'Œuvre</th>
+                                    <th class="w-1/5">Mesures (mm.)</th>
+                                    <th>Analyse Structurelle et Centrage Tonal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Introduction</td>
+                                    <td>mm. 1-4</td>
+                                    <td>Instauration immédiate de la tension dramatique avec le maintien de l'accord de dominante (Sol majeur / G), créant l'anticipation du départ du niveau.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Section A</td>
+                                    <td>mm. 5-20</td>
+                                    <td>Période de 16 mesures (souvent décrite comme une phrase étendue) centrée sur la tonique Do (C). C'est la section harmoniquement la plus aventureuse et novatrice de l'œuvre.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Section B</td>
+                                    <td>mm. 21-52</td>
+                                    <td>Double période parallèle, également centrée sur Do (C), adoptant un rythme harmonique beaucoup plus stable et itératif, offrant un contraste avec la Section A.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-gray-700 dark:text-gray-300">Section C</td>
+                                    <td>mm. 53-68</td>
+                                    <td>Deux phrases conclusives employant un cycle des quintes pour ramener inexorablement l'harmonie vers la dominante, préparant le bouclage parfait (looping).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="decorticage-a">Décorticage de la Section A : Conduite des Voix et Néo-Riemannianisme</h3>
+                    <p>La Section A est sans l'ombre d'un doute le passage le plus fascinant pour les théoriciens de la musique analytique. Elle commence de manière rassurante sur l'accord de tonique (Do majeur), mais dévie quasi immédiatement en utilisant une technique de conduite des voix extrêmement parcimonieuse (parsimonious voice leading) qui défie les attentes diatoniques simples.</p>
+                    
+                    <p>La progression d'accords s'articule ainsi de manière séquentielle : C → Eb+ (Mib augmenté) → gm (Sol mineur) → A7 (La septième de dominante) → F (Fa majeur).</p>
+                    
+                    <p>La mécanique contrapuntique derrière cette évolution chromatique complexe est dictée par la ligne de basse. La basse s'ouvre sur une quinte à vide Do-Sol (C-G). Tandis que le Sol est maintenu fixement en tant que note pédale ou pivot (servant de point d'ancrage psychoacoustique), la note inférieure de la basse descend par demi-tons à chaque changement d'accord. Parallèlement à ce mouvement souterrain, la voix de soprano (la mélodie principale) suit ce mouvement chromatique descendant, passant subtilement de Mi à Do dièse (E to C#). Ce contrepoint d'une extrême rigueur confère une logique auditive implacable à une progression d'accords qui, isolée sur le papier, semblerait totalement étrangère et dissonante dans le cadre de la tonalité de Do majeur.</p>
+                    
+                    <p>L'arrivée majestueuse sur le Fa majeur depuis le La septième (A7) peut s'analyser pertinemment à travers le prisme des théories transformationnelles (notamment la théorie néo-riemannienne), où un accord majeur se transforme via un mouvement spécifique des voix, illustrant une richesse chromatique inouïe pour un simple jeu 8-bit. La phrase se poursuit logiquement par un retour à Do majeur, qui se transforme à son tour en La majeur (une transformation RP dans la terminologie riemannienne), amorçant un cycle des quintes descendant (D7 → G7 → C) pour conclure magistralement la section.</p>
+
+                    <h3 id="sections-b-c">Sections B et C : Stabilité Fonctionnelle et Mouvement Cyclique</h3>
+                    <p>La Section B ralentit délibérément le rythme harmonique, offrant une pause auditive bienveillante au joueur après les excursions chromatiques intenses de la section précédente. Elle repose sur une progression itérative qui est le pilier fondamental de la musique populaire, du jazz et de la tin pan alley : I → V/V → V7 → I (Do majeur, suivi de Ré majeur agissant comme dominante de la dominante, glissant vers Sol septième, pour résoudre sur Do majeur). Cette séquence classique, répétée à l'identique deux fois, ancre fermement la tonalité et invite le joueur à un moment de fluidité et de prévisibilité dans le gameplay, s'appuyant sur l'harmonie fonctionnelle de dominante typique du vocabulaire jazz-pop.</p>
+                    
+                    <p>La Section C vient rompre cette prévisibilité en introduisant une nouvelle surprise harmonique de taille. L'accord de tonique Do majeur subit une transformation chromatique soudaine LP (Leading-tone exchange / Parallel) pour devenir un éclatant accord de Mi majeur (E major). À partir de ce Mi majeur inattendu, Kondo initie un cycle des quintes systématique (E → A → D → G) qui crée une tension directionnelle irrésistible. Cette cascade harmonique est résolue par le retour triomphal à l'accord de dominante originel (Sol), qui agit comme un tremplin propulsant le joueur de nouveau au début de la Section A.</p>
+                    
+                    <p>L'analyse spectrale de la ligne de basse révèle également un trait d'écriture brillant : sur chaque temps fort (downbeat), la ligne de basse joue systématiquement la fondamentale de l'accord, un principe directement emprunté aux techniques de « walking basslines » des contrebassistes de jazz, ce qui clarifie l'harmonie sous-jacente malgré l'absence d'accords pleins. Ces temps forts sont très souvent approchés par des notes de passage chromatiques ou diatoniques placées sur les levées (upbeats), ce qui adoucit les sauts intervalliques et génère le fameux « drive » rythmique caractéristique du morceau. Enfin, les arpèges exécutés à grande vitesse et les altérations mélodiques (comme le jeu d'alternance entre le Fa naturel et le Fa dièse dans les variations de la section B) teintent les harmonies de riches couleurs modales et de qualités de septième de dominante, insérant clandestinement une maturité compositionnelle sous l'apparence d'une ritournelle insouciante.</p>
+
+                    <h2 id="part-6">VI. De la Console au Big Band : L'Héritage Jazz et les Orchestrations Modernes</h2>
+                    <p>L'élégance structurelle et la profondeur harmonique des compositions de Koji Kondo ont naturellement attiré l'attention érudite des musiciens et arrangeurs de jazz contemporains. À notre époque, la musique de jeu vidéo ne se contente plus d'être reproduite par des orchestres symphoniques à cordes ; elle est désormais étudiée et traitée comme un corpus légitime de standards de jazz, sujet à l'improvisation libre et au réarrangement complexe.</p>
+
+                    <h3 id="impact-bigband">L'Impact Culturel et Musical du The 8-Bit Big Band</h3>
+                    <p>L'exemple le plus probant et retentissant de cette transition stylistique est sans conteste le travail de l'orchestre « The 8-Bit Big Band », un ensemble prodigieux dirigé par les arrangeurs Charlie Rosen et Jake Silverman. Formé d'un orchestre de studio massif réunissant près de 60 musiciens de haut vol basés à New York, ce projet traite la musique de jeu vidéo historique avec la même révérence, la même rigueur académique et la même créativité que les partitions légendaires de Broadway ou les compositions du Great American Songbook de Cole Porter ou George Gershwin. Leur approche artistique a été validée institutionnellement de la plus haute des manières, couronnée par un Grammy Award prestigieux en 2022 pour le Meilleur Arrangement Instrumental, cimentant ce croisement des genres dans l'histoire de la musique.</p>
+                    
+                    <p>Dans leur album événement Press Start!, l'arrangement somptueux du thème Overworld de Super Mario Bros. 2 démontre l'incroyable malléabilité du matériel source de Koji Kondo. Puisque Kondo était contraint d'utiliser des shell voicings minimalistes à cause de la limite stricte des trois canaux tonaux de la NES, de vastes espaces harmoniques ont été laissés acoustiquement vacants de manière inhérente lors de la conception originale. Les arrangeurs de jazz modernes exploitent cette rareté délibérée comme un terrain de jeu fertile pour appliquer des techniques de réharmonisation avancées.</p>
+
+                    <h3 id="techniques-arrangement">Techniques d'Arrangement et d'Expansion du Vocabulaire Jazz</h3>
+                    <p>La réharmonisation de l'Overworld par le 8-Bit Big Band implique l'ajout sophistiqué d'extensions harmoniques supérieures (neuvièmes, onzièmes, treizièmes altérées) et l'utilisation habile de substitutions tritoniques pour densifier les cadences. L'orchestration luxuriante intègre des figures d'accompagnement idiomatiques du jazz (backing figures) aux pupitres des saxophones et des trombones, des sections étendues de solos improvisés, et de titanesques « shout choruses » où l'intégralité de la section des cuivres expose la mélodie de Kondo avec une intensité dramatique et un volume sonique maximal.</p>
+                    
+                    <p>Ce processus créatif révèle aux musicologues que la composition originale 8-bit n'est pas une simple mélodie rigide, mais fonctionne comme une véritable « carte conceptuelle » (conceptual map) d'une flexibilité inouïe. Le rythme calypso/latin suggéré originellement se traduit à la perfection lorsqu'il est assumé par la section rythmique étoffée du big band. La basse triangulaire synthétique, statique et froide, est transcendée lorsqu'elle est remplacée par la chaleur boisée d'une contrebasse organique exécutant le walking bass ; le bruit blanc compressé de la NES prend vie lorsqu'il est interprété par une batterie de jazz acoustique complète, rehaussée par un arsenal de percussions latines (congas, bongos, timbales) qui exaltent le groove afro-cubain. Cet héritage éclatant confirme avec acuité les déclarations de Kondo lui-même, qui a toujours considéré le jazz, la fusion et les rythmes latins non pas comme des genres exclusifs, mais comme occupant un même continuum esthétique interconnecté.</p>
+
+                    <h2 id="part-7">VII. Guide Pratique et Esthétique de l'Interprétation au Piano</h2>
+                    
+                    <!-- INSERTION IMAGE : PARTITION LOCALE (.PNG) -->
+                    <figure class="partition-figure reveal">
+                        <!-- Le fichier P.MB2.O.png doit être dans le même dossier -->
+                        <img src="P.MB2.O.png" alt="Partition musicale complète de Super Mario Bros. 2 - Thème Overworld" class="partition-image mx-auto">
+                        <figcaption class="partition-caption">Transcription pianistique de la partition originale - Super Mario Bros. 2</figcaption>
+                    </figure>
+
+                    <!-- INSERTION AUDIO 2 : INTERPRÉTATION PIANO (.WAV) -->
+                    <div class="media-container reveal">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg text-indigo-600 dark:text-indigo-300">
+                                <i data-lucide="mic" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-lg m-0">Interprétation Pianistique</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 m-0">Performance au piano soliste (Stride et Voicings en coquille)</p>
+                            </div>
+                        </div>
+                        <!-- Le fichier piano.wav doit être dans le même dossier -->
+                        <audio controls preload="metadata">
+                            <source src="piano.wav" type="audio/wav">
+                            Votre navigateur ne supporte pas l'élément audio.
+                        </audio>
+                    </div>
+
+                    <p>Interpréter l'Overworld de Super Mario Bros. 2 au piano soliste, de manière à la fois historiquement fidèle au jeu original et artistiquement digne d'une performance de concert, représente un défi biomécanique et intellectuel redoutable. Le pianiste ne joue pas simplement un morceau ; il doit assumer simultanément le rôle des ondes carrées polyphoniques (mélodie et harmonie interne), de l'onde triangulaire (basse continue implacable) et, dans l'esprit de son phrasé, du canal de bruit blanc de percussion.</p>
+
+                    <h3 id="maitrise-architecturale">La Maîtrise Architecturale de la Main Gauche : Stride et Drop and Bounce</h3>
+                    <p>Le fondement absolu de toute interprétation réussie et propulsive de cette pièce repose sur la main gauche, qui exige une virtuosité technique directement héritée des maîtres du piano stride de Harlem et du boogie-woogie des années folles. La main gauche doit maintenir un mouvement d'horlogerie perpétuel et infaillible. Dans l'application stricte de la technique du stride, le pianiste déploie un motif où la basse fondamentale de l'accord (ou la dixième) est frappée avec autorité sur les temps forts (temps 1 et 3 de la mesure en 4/4), suivie d'un bond fulgurant pour plaquer un accord compact positionné dans le registre ténor ou médium du clavier sur les temps faibles (temps 2 et 4).</p>
+                    
+                    <p>La distance physique considérable de ces sauts requiert non seulement une mémoire musculaire et spatiale d'une précision chirurgicale, mais aussi l'application rigoureuse d'une détente musculaire (la technique du drop and bounce, ou chute et rebond du poignet) pour éviter la fatigue et la tétanie des tendons à des tempos élevés. En effet, le tempo d'origine, nécessaire pour capturer l'esprit frénétique et joyeux du jeu, se situe généralement autour de 130 à 150 BPM. La régularité métronomique inébranlable de la main gauche est non négociable dans cette discipline ; elle agit comme l'ancrage gravitationnel du morceau, un pivot autour duquel la main droite peut virevolter avec syncope, vélocité et espièglerie sans jamais que le tempo global de l'édifice ne fluctue.</p>
+
+                    <h3 id="equilibrisme">L'Équilibrisme de la Main Droite : Voicings en Coquille et Conduite des Voix</h3>
+                    <p>À la main droite, le pianiste est confronté à la gestion d'une mélodie véloce ornée d'accords constants. En raison de la vitesse d'exécution vertigineuse exigée par la fidélité à l'arrangement 8-bit originel, une réduction harmonique intelligente est souvent indispensable pour le jeu soliste en direct (live), sous peine de rendre l'exécution physiquement impossible ou musicalement brouillonne.</p>
+                    
+                    <p>C'est ici que l'étude des « shell voicings » (voicings en coquille) s'avère providentielle. Plutôt que de saturer l'espace harmonique en tentant de jouer des accords complets de quatre ou cinq notes, l'interprète lucide doit privilégier les notes structurelles, à savoir les tierces et les septièmes placées sous la note mélodique, omettant allègrement la quinte juste et souvent la fondamentale (cette dernière étant déjà puissamment affirmée par les bonds de la main gauche). Les chromatismes retors et les modulations internes rapides — comme l'exige le passage sinueux de la Section A (C → Eb+ → gm → A7 → F) décrit dans l'analyse harmonique — nécessitent un doigté pensé à l'avance et d'une grande agilité. L'objectif est de faire ressortir avec limpidité la conduite des voix (voice leading) à l'intérieur même du tissu harmonique, tout en évitant d'étouffer la brillance de la note de chant (la ligne de soprano) qui doit dominer le mix acoustique du piano.</p>
+
+                    <h3 id="articulation">Articulation Numérique, Pédalisation et Caractère Rythmique</h3>
+                    <p>L'esthétique si particulière et l'illusion de la polyphonie 8-bit de la puce sonore de la NES proviennent en grande partie de la nature fondamentalement staccato et abruptes des impulsions électroniques carrées. Par conséquent, la transposition au piano nécessite une approche spécifique : l'utilisation de la pédale forte (pédale de sustain) doit être d'une parcimonie extrême, voire totalement proscrite dans les sections les plus rythmiques et denses du morceau. Un jeu excessivement lié (legato) gommerait inévitablement l'aspect percussif, sec et précis inhérent à la composition originelle. Il convient de favoriser un jeu staccato digital perlé, net, incisif et rebondissant, reproduisant avec les marteaux du piano l'attaque immédiate des générateurs d'ondes.</p>
+                    
+                    <p>Le traitement rythmique soulève la dernière grande question d'interprétation stylistique : faut-il aborder cette partition avec un « swing » jazzistique (ternaire) ou la jouer « straight » (binaire)? Si l'harmonie riche en septièmes de dominante suggère le répertoire jazz, la volonté avérée de Kondo penchait davantage vers l'énergie d'un « rebond latin » (Latin bounce) ou d'un Mambo pop. L'interprétation la plus fidèle à l'intention du compositeur et au dynamisme du jeu vidéo évitera donc le balancement tertiaire paresseux d'un shuffle blues, pour privilégier un jeu en croches droites (straight eighths) mais rendues vivantes par des syncopes hautement accentuées sur les contre-temps. C'est très précisément ce décalage minutieux des accents dynamiques qui crée l'élan cinétique et imite avec brio l'effet de pesanteur, d'apesanteur et l'action de saut qui définit ontologiquement l'avatar de Mario. En fin de compte, le caractère global de l'interprétation doit rester lumineux, léger et imprégné de l'esprit burlesque du vaudeville, tout en maintenant sous la surface la rigueur martiale de l'exigence technique pianistique.</p>
+                </div>
+                
+                <footer class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
+                    <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                        <h4 class="font-display font-bold text-lg mb-2 flex items-center gap-2">
+                            <i data-lucide="quote" class="w-5 h-5 text-primary"></i> 
+                            Citer cet article
+                        </h4>
+                        <p class="text-sm font-mono bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 select-all">
+                            Anonyme (2026). <i>L'Analyse Exhaustive du Thème Overworld de Super Mario Bros. 2 : Histoire, Philosophie Ludomusicale et Interprétation Pianistique</i>. Revue de Ludomusicologie.
+                        </p>
+                    </div>
+                </footer>
+
+            </article>
+        </main>
+    </div>
+
+    <!-- Interface d'aide IA -->
+    <div id="text-selection-popup" class="bg-gray-900 text-white text-sm px-3 py-2 rounded-lg shadow-xl cursor-pointer hover:bg-primary transition-colors flex items-center space-x-2 hide-in-zen">
+        <span>✨ Expliquer ce passage</span>
+    </div>
+
+    <button id="ai-chat-btn" class="fixed bottom-24 right-8 p-4 rounded-full bg-indigo-600 text-white shadow-xl hover:bg-indigo-700 transition-all z-50 hide-in-zen flex items-center justify-center group" aria-label="Assistant IA">
+        <i data-lucide="sparkles" class="w-5 h-5 group-hover:animate-pulse"></i>
+    </button>
+
+    <div id="ai-chat-panel" class="fixed bottom-36 right-8 w-[90vw] sm:w-96 h-[500px] max-h-[70vh] bg-white dark:bg-darkpaper border border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl flex flex-col overflow-hidden z-50 hide-in-zen">
+        <div class="bg-indigo-600 text-white px-4 py-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="bot" class="w-5 h-5"></i>
+                <h3 class="font-display font-semibold text-lg m-0">Assistant Ludomusicologue</h3>
+            </div>
+            <button id="close-chat-btn" class="text-white/80 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-black/20 font-serif text-sm">
+            <div class="flex items-start space-x-2">
+                <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600 dark:text-indigo-300"></i>
+                </div>
+                <div class="bg-white dark:bg-darkpaper border border-gray-200 dark:border-gray-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-gray-800 dark:text-gray-200">
+                    Bonjour ! Je suis une IA experte basée sur cet article. Posez-moi vos questions sur le thème de Super Mario Bros. 2 ou sélectionnez du texte pour obtenir une explication simplifiée. ✨
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 bg-white dark:bg-darkpaper border-t border-gray-200 dark:border-gray-700">
+            <form id="chat-form" class="flex items-center space-x-2">
+                <input type="text" id="chat-input" placeholder="Posez votre question..." class="flex-1 bg-gray-100 dark:bg-gray-800 border-transparent focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-indigo-500 rounded-full px-4 py-2 text-sm outline-none transition-all dark:text-white" required>
+                <button type="submit" class="p-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" id="send-chat-btn">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <button id="back-to-top" class="fixed bottom-8 right-8 p-3 rounded-full bg-primary text-white shadow-lg hover:bg-red-800 dark:hover:bg-red-600 transition-all z-50 hide-in-zen" aria-label="Retour en haut">
+        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Initialisation des icônes
+            lucide.createIcons();
+
+            // Gestion du Mode Sombre
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+            });
+
+            // Barre de progression
+            const progressBar = document.getElementById('progress-bar');
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                progressBar.style.width = scrolled + '%';
+            });
+
+            const contentBody = document.querySelector('.content-body');
+            
+            if (contentBody) {
+                const textContent = contentBody.innerText;
+                const wordCount = textContent.split(/\s+/).length;
+                const wordsPerMinute = 200;
+                const readingTime = Math.ceil(wordCount / wordsPerMinute);
+                const readingTimeEl = document.getElementById('reading-time');
+                if (readingTimeEl) readingTimeEl.innerText = `Temps de lecture : ~${readingTime} min`;
+            }
+
+            const headings = document.querySelectorAll('.content-body h2');
+            const tocContainer = document.getElementById('toc-container');
+            
+            if (tocContainer) {
+                headings.forEach((heading, index) => {
+                    const link = document.createElement('a');
+                    link.href = `#${heading.id}`;
+                    link.textContent = heading.textContent;
+                    link.className = 'toc-link block py-1 hover:text-primary transition-colors';
+                    link.dataset.target = heading.id;
+                    tocContainer.appendChild(link);
+                });
+            }
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.querySelectorAll('.toc-link').forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        const activeLink = document.querySelector(`.toc-link[data-target="${entry.target.id}"]`);
+                        if(activeLink) {
+                            activeLink.classList.add('active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            headings.forEach(heading => observer.observe(heading));
+
+            // Glossaire
+            const glossary = {
+                "ludomusicologie": "Étude académique et analyse formelle de la musique de jeu vidéo.",
+                "syncope": "Décalage rythmique où une note est attaquée sur un temps faible et prolongée.",
+                "shell voicings": "Accords de jazz simplifiés, souvent réduits à la fondamentale, tierce et septième.",
+                "néo-riemannienne": "Théorie musicale qui étudie les transformations harmoniques sans centre tonal strict.",
+                "walking bass": "Ligne de basse continue avançant sur chaque temps, typique du jazz.",
+                "slapstick": "Genre d'humour burlesque impliquant une comédie physique exagérée."
+            };
+
+            if (contentBody) {
+                let contentHtml = contentBody.innerHTML;
+                Object.keys(glossary).forEach(term => {
+                    const regex = new RegExp(`\\b(${term}s?)\\b`, 'gi');
+                    contentHtml = contentHtml.replace(regex, `<span class="term-tooltip">$1<span class="tooltip-text">${glossary[term]}</span></span>`);
+                });
+                contentBody.innerHTML = contentHtml;
+                lucide.createIcons();
+            }
+
+            // Scroll Reveal (Incluant les nouveaux conteneurs media et images)
+            const revealElements = document.querySelectorAll('.content-body p, .content-body h2, .content-body h3, .content-body .overflow-x-auto, .media-container, .partition-figure');
+            
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '-5% 0px -5% 0px',
+                threshold: 0.15
+            });
+
+            revealElements.forEach(el => {
+                el.classList.add('reveal');
+                revealObserver.observe(el);
+            });
+
+            // Mode Zen
+            const zenToggleBtn = document.getElementById('zen-mode-toggle');
+            zenToggleBtn.addEventListener('click', () => {
+                document.body.classList.toggle('zen-mode');
+                const isZen = document.body.classList.contains('zen-mode');
+                
+                zenToggleBtn.innerHTML = isZen 
+                    ? `<i data-lucide="minimize" class="w-5 h-5 text-primary"></i>` 
+                    : `<i data-lucide="focus" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>`;
+                lucide.createIcons();
+            });
+
+            // Retour en Haut
+            const backToTopBtn = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 600) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Smooth scroll mots-clés
+            document.querySelectorAll('.keyword-pill').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const headerOffset = 120;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }
+                });
+            });
+
+            // --- INTÉGRATION API GEMINI ---
+            const chatBtn = document.getElementById('ai-chat-btn');
+            const chatPanel = document.getElementById('ai-chat-panel');
+            const closeChatBtn = document.getElementById('close-chat-btn');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const selectionPopup = document.getElementById('text-selection-popup');
+            
+            const apiKey = ""; // Remplacer par la vraie clé API Gemini
+            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            let articleContext = "";
+            if (contentBody) {
+                const clone = contentBody.cloneNode(true);
+                articleContext = clone.innerText.substring(0, 15000);
+            }
+
+            const systemInstruction = `Tu es un assistant IA ludomusicologue expert, intégré à un article académique sur la musique de Super Mario Bros. 2.
+Ton rôle est de répondre aux questions des lecteurs ou de clarifier des concepts complexes.
+Base tes réponses PRINCIPALEMENT sur le contenu de l'article ci-dessous.
+Réponds toujours en français, de manière académique mais accessible, claire et concise (pas plus de 3 paragraphes).
+Utilise la mise en forme Markdown pour mettre en évidence les termes importants.
+--- CONTENU DE L'ARTICLE ---
+${articleContext}`;
+
+            function appendMessage(text, isUser = false) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `flex items-start space-x-2 chat-message ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+                
+                const iconDiv = document.createElement('div');
+                iconDiv.className = `w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isUser ? 'bg-gray-200 dark:bg-gray-700' : 'bg-indigo-100 dark:bg-indigo-900'}`;
+                iconDiv.innerHTML = isUser ? `<i data-lucide="user" class="w-4 h-4 text-gray-600 dark:text-gray-300"></i>` : `<i data-lucide="sparkles" class="w-4 h-4 text-indigo-600 dark:text-indigo-300"></i>`;
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = `max-w-[80%] border p-3 rounded-2xl shadow-sm text-sm font-serif leading-relaxed ${
+                    isUser 
+                    ? 'bg-indigo-600 text-white rounded-tr-none border-transparent' 
+                    : 'bg-white dark:bg-darkpaper border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-none'
+                }`;
+                
+                const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                bubbleDiv.innerHTML = formattedText;
+                
+                msgDiv.appendChild(iconDiv);
+                msgDiv.appendChild(bubbleDiv);
+                chatMessages.appendChild(msgDiv);
+                lucide.createIcons();
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.id = 'typing-indicator';
+                typingDiv.className = 'flex items-start space-x-2 chat-message';
+                typingDiv.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600 dark:text-indigo-300"></i>
+                    </div>
+                    <div class="bg-white dark:bg-darkpaper border border-gray-200 dark:border-gray-700 p-3 rounded-2xl rounded-tl-none shadow-sm flex items-center h-10 typing-indicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                lucide.createIcons();
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return typingDiv;
+            }
+
+            async function callGeminiAPI(userQuery) {
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemInstruction }] }
+                };
+
+                const retries = [1000, 2000, 4000, 8000, 16000];
+                for (let i = 0; i <= retries.length; i++) {
+                    try {
+                        const response = await fetch(geminiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+                        
+                        const data = await response.json();
+                        return data.candidates?.[0]?.content?.parts?.[0]?.text || "Désolé, je n'ai pas pu générer une réponse.";
+                    } catch (error) {
+                        if (i === retries.length) {
+                            console.error("Erreur Gemini API:", error);
+                            return "Désolé, le service d'intelligence artificielle est actuellement indisponible après plusieurs tentatives. Veuillez réessayer plus tard.";
+                        }
+                        await new Promise(resolve => setTimeout(resolve, retries[i]));
+                    }
+                }
+            }
+
+            chatBtn.addEventListener('click', () => {
+                chatPanel.classList.toggle('active');
+                if (chatPanel.classList.contains('active')) chatInput.focus();
+            });
+
+            closeChatBtn.addEventListener('click', () => {
+                chatPanel.classList.remove('active');
+            });
+
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const query = chatInput.value.trim();
+                if (!query) return;
+
+                appendMessage(query, true);
+                chatInput.value = '';
+                chatInput.disabled = true;
+                
+                const indicator = showTypingIndicator();
+                const responseText = await callGeminiAPI(query);
+                
+                indicator.remove();
+                appendMessage(responseText, false);
+                chatInput.disabled = false;
+                chatInput.focus();
+            });
+
+            let selectedText = "";
+            document.addEventListener('selectionchange', () => {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0 && selection.toString().trim().length > 15) {
+                    selectedText = selection.toString().trim();
+                    const range = selection.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    
+                    selectionPopup.style.left = `${rect.left + window.scrollX + (rect.width / 2) - (selectionPopup.offsetWidth / 2)}px`;
+                    selectionPopup.style.top = `${rect.top + window.scrollY - 40}px`;
+                    selectionPopup.classList.add('show');
+                } else {
+                    selectionPopup.classList.remove('show');
+                }
+            });
+
+            selectionPopup.addEventListener('click', async (e) => {
+                e.preventDefault();
+                selectionPopup.classList.remove('show');
+                
+                if (!chatPanel.classList.contains('active')) {
+                    chatPanel.classList.add('active');
+                }
+                
+                const query = `Peux-tu m'expliquer plus simplement ce passage précis de l'article : "${selectedText}" ?`;
+                appendMessage(query, true);
+                
+                const indicator = showTypingIndicator();
+                const responseText = await callGeminiAPI(query);
+                
+                indicator.remove();
+                appendMessage(responseText, false);
+            });
+
+        });
+    </script>
+</body>
+</html>
+
